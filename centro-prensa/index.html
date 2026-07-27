@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centro de Gestión de Solicitudes de Prensa</title>
+  <meta name="description" content="Centro de control de solicitudes de prensa y comunicaciones." />
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Librerías (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">📡</div>
+      <h1>Centro de Prensa</h1>
+      <div class="sub" id="brandSub">Gestión de Solicitudes</div>
+    </div>
+    <nav class="nav" id="nav">
+      <div class="group-label">Principal</div>
+      <a data-view="dashboard" class="active"><span class="ico">📊</span> Dashboard</a>
+      <a data-view="agenda"><span class="ico">🗓️</span> Agenda</a>
+      <a data-view="solicitudes"><span class="ico">📋</span> Solicitudes</a>
+      <div class="group-label">Servicios</div>
+      <a data-view="cubrimientos"><span class="ico">📸</span> Cubrimientos</a>
+      <a data-view="piezas"><span class="ico">🎨</span> Piezas gráficas</a>
+      <a data-view="videos"><span class="ico">🎥</span> Videos</a>
+      <div class="group-label">Seguimiento</div>
+      <a data-view="pendientes"><span class="ico">🔵</span> Pendientes <span class="badge" id="navPendBadge">0</span></a>
+      <a data-view="analisis"><span class="ico">📈</span> Análisis</a>
+      <a data-view="informes"><span class="ico">📄</span> Informes</a>
+      <a data-view="config"><span class="ico">⚙️</span> Configuración</a>
+    </nav>
+    <div class="mode-tag" id="modeTag"><span class="dot"></span><span id="modeText">Modo demo</span></div>
+  </aside>
+  <div class="backdrop" id="backdrop"></div>
+
+  <!-- ===================== MAIN ===================== -->
+  <div class="main">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
+      <div>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="page-sub" id="pageSub">Panel general de solicitudes</div>
+      </div>
+      <div class="spacer"></div>
+      <div class="clock" id="clock"></div>
+      <button class="btn primary" id="syncBtn" title="Sincronizar con Google Calendar">
+        <span id="syncIco">🔄</span> Actualizar solicitudes
+      </button>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section class="view active" id="view-dashboard">
+        <div id="dashKpis"></div>
+
+        <div class="section-title">Cumplimiento</div>
+        <div id="cumplPanel"></div>
+
+        <div class="section-title">Solicitudes pendientes de verificación <span class="pill" id="pendCountTitle">0</span></div>
+        <div id="dashPending"></div>
+
+        <div class="grid-2" style="margin-top:22px">
+          <div class="card">
+            <div class="card-head"><h3>Agenda de hoy</h3><span class="hint" id="todayDate"></span></div>
+            <div class="card-body" id="todayAgenda"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Solicitudes próximas</h3><span class="hint">7 días</span></div>
+            <div class="card-body" id="upcomingMini"></div>
+          </div>
+        </div>
+
+        <div class="section-title">Distribución rápida</div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>Por tipo de requerimiento</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chTipoDash"></canvas></div></div></div>
+          <div class="card"><div class="card-head"><h3>Por estado</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chEstadoDash"></canvas></div></div></div>
+        </div>
+      </section>
+
+      <!-- ============ AGENDA ============ -->
+      <section class="view" id="view-agenda">
+        <div class="agenda-tools">
+          <div class="seg" id="agendaViews">
+            <button data-av="mes" class="active">Mes</button>
+            <button data-av="semana">Semana</button>
+            <button data-av="dia">Día</button>
+            <button data-av="lista">Lista</button>
+          </div>
+          <div class="agenda-nav">
+            <button class="btn sm" id="agPrev">‹</button>
+            <span class="lbl" id="agLabel"></span>
+            <button class="btn sm" id="agNext">›</button>
+            <button class="btn sm" id="agToday">Hoy</button>
+          </div>
+          <div class="legend">
+            <span><span class="sq" style="background:var(--t-cub)"></span>Cubrimiento</span>
+            <span><span class="sq" style="background:var(--t-pza)"></span>Pieza gráfica</span>
+            <span><span class="sq" style="background:var(--t-vid)"></span>Video</span>
+            <span><span class="sq" style="background:var(--st-real)"></span>Realizada</span>
+            <span><span class="sq" style="background:var(--st-nore)"></span>No realizada</span>
+            <span><span class="sq" style="background:var(--st-pend)"></span>Pendiente</span>
+          </div>
+        </div>
+        <div id="agendaBody"></div>
+      </section>
+
+      <!-- ============ SOLICITUDES (TABLA GENERAL) ============ -->
+      <section class="view" id="view-solicitudes">
+        <div class="table-tools">
+          <div class="search"><input class="input" id="tblSearch" placeholder="Buscar por nombre, programa, lugar, correo…" /></div>
+          <select class="input" id="fltEstado"><option value="">Todos los estados</option></select>
+          <select class="input" id="fltTipo"><option value="">Todos los tipos</option></select>
+          <select class="input" id="fltPrograma"><option value="">Todos los programas</option></select>
+          <select class="input" id="fltLugar"><option value="">Todos los lugares</option></select>
+          <input class="input" type="date" id="fltDesde" title="Desde" />
+          <input class="input" type="date" id="fltHasta" title="Hasta" />
+          <button class="btn sm" id="fltClear">Limpiar</button>
+          <button class="btn sm" id="expCsv">⬇ CSV</button>
+          <button class="btn sm" id="expXlsx">⬇ Excel</button>
+        </div>
+        <div class="table-scroll">
+          <table class="data" id="mainTable">
+            <thead><tr>
+              <th data-sort="inicioISO">Fecha <span class="arrow">↕</span></th>
+              <th data-sort="horaInicio">Hora <span class="arrow">↕</span></th>
+              <th data-sort="nombre">Solicitante <span class="arrow">↕</span></th>
+              <th data-sort="programa">Programa <span class="arrow">↕</span></th>
+              <th class="no-sort">Contacto</th>
+              <th data-sort="tipo">Tipo <span class="arrow">↕</span></th>
+              <th data-sort="lugar">Lugar / Descripción <span class="arrow">↕</span></th>
+              <th data-sort="estado">Estado <span class="arrow">↕</span></th>
+            </tr></thead>
+            <tbody id="mainTableBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted)" id="tblCount"></div>
+      </section>
+
+      <!-- ============ MÓDULOS DE SERVICIO ============ -->
+      <section class="view" id="view-cubrimientos">
+        <div id="cubKpis" class="mini-kpis"></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>Lugares con más cubrimientos</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chLugares"></canvas></div></div></div>
+          <div class="card"><div class="card-head"><h3>Estado de los cubrimientos</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chCubEstado"></canvas></div></div></div>
+        </div>
+        <div class="section-title">Bandeja de cubrimientos</div>
+        <div class="table-scroll"><table class="data"><thead><tr><th>Fecha</th><th>Solicitante</th><th>Programa</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="cubTable"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-piezas">
+        <div id="pzaKpis" class="mini-kpis"></div>
+        <div class="section-title">Bandeja de piezas gráficas</div>
+        <div class="table-scroll"><table class="data"><thead><tr><th>Fecha</th><th>Solicitante</th><th>Programa</th><th>Descripción de la pieza</th><th>Estado</th></tr></thead><tbody id="pzaTable"></tbody></table></div>
+      </section>
+
+      <section class="view" id="view-videos">
+        <div id="vidKpis" class="mini-kpis"></div>
+        <div class="section-title">Bandeja de grabaciones de video</div>
+        <div class="table-scroll"><table class="data"><thead><tr><th>Fecha</th><th>Hora</th><th>Solicitante</th><th>Programa</th><th>Lugar</th><th>Estado</th></tr></thead><tbody id="vidTable"></tbody></table></div>
+      </section>
+
+      <!-- ============ PENDIENTES DE VERIFICACIÓN ============ -->
+      <section class="view" id="view-pendientes">
+        <div class="alert-banner">
+          <span class="ab-ico">🔵</span>
+          <div>
+            <h3>Solicitudes pendientes de verificación</h3>
+            <p>Solicitudes cuya fecha ya pasó y aún no tienen un resultado registrado. <span class="count" id="pendTotal">0</span> por verificar.</p>
+          </div>
+        </div>
+        <div id="pendingFull" class="pending-list"></div>
+      </section>
+
+      <!-- ============ ANÁLISIS ============ -->
+      <section class="view" id="view-analisis">
+        <div class="section-title">Análisis por programa</div>
+        <div class="prog-select-row">
+          <select class="input" id="anProg"><option value="">— Todos los programas —</option></select>
+          <div id="anProgKpis" class="mini-kpis" style="flex:1;margin:0"></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>Solicitudes por programa</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chPrograma"></canvas></div></div></div>
+          <div class="card"><div class="card-head"><h3>Por tipo de requerimiento</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chTipo"></canvas></div></div></div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="card"><div class="card-head"><h3>Solicitudes por mes</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chMes"></canvas></div></div></div>
+          <div class="card"><div class="card-head"><h3>Por día de la semana</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chDow"></canvas></div></div></div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="card"><div class="card-head"><h3>Estado de ejecución</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chEstado"></canvas></div></div></div>
+          <div class="card"><div class="card-head"><h3>Cumplimiento por mes</h3></div><div class="card-body"><div class="chart-wrap"><canvas id="chCumpl"></canvas></div></div></div>
+        </div>
+
+        <div class="section-title">Carga de trabajo <span class="pill">ponderada</span></div>
+        <div id="loadCards" class="load-grid"></div>
+
+        <div class="section-title">Alertas del sistema</div>
+        <div id="alertCards" class="alert-cards"></div>
+      </section>
+
+      <!-- ============ INFORMES ============ -->
+      <section class="view" id="view-informes">
+        <div class="table-tools">
+          <select class="input" id="repPeriodo">
+            <option value="semana">Informe semanal</option>
+            <option value="mes" selected>Informe mensual</option>
+            <option value="trimestre">Informe trimestral</option>
+            <option value="anio">Informe anual</option>
+          </select>
+          <button class="btn sm" id="repCsv">⬇ CSV</button>
+          <button class="btn sm" id="repXlsx">⬇ Excel</button>
+          <button class="btn sm" id="repPdf">⬇ PDF</button>
+        </div>
+        <div id="reportBody"></div>
+      </section>
+
+      <!-- ============ CONFIGURACIÓN ============ -->
+      <section class="view" id="view-config">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Modo y conexión</h3></div>
+            <div class="card-body">
+              <div class="cfg-row">
+                <div><strong>Modo de datos</strong><div class="cfg-desc">Demo usa datos ficticios; Producción lee Google Calendar.</div></div>
+                <select class="input" id="cfgModo"><option value="demo">Demo</option><option value="produccion">Producción</option></select>
+              </div>
+              <div class="cfg-row">
+                <div><strong>URL del API (Apps Script)</strong><div class="cfg-desc">Termina en /exec</div></div>
+                <input class="input" id="cfgUrl" placeholder="https://…/exec" style="width:100%" />
+              </div>
+              <div class="cfg-row">
+                <div><strong>Token (opcional)</strong><div class="cfg-desc">Debe coincidir con el backend.</div></div>
+                <input class="input" id="cfgToken" placeholder="—" />
+              </div>
+              <div class="cfg-row">
+                <div><strong>Auto-sincronización</strong><div class="cfg-desc">Intervalo de actualización automática.</div></div>
+                <select class="input" id="cfgSync"><option value="0">Desactivada</option><option value="60000">1 min</option><option value="300000">5 min</option><option value="900000">15 min</option></select>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Ponderaciones de carga</h3></div>
+            <div class="card-body">
+              <div class="cfg-row"><div><strong>📸 Cubrimiento</strong><div class="cfg-desc">Puntos por solicitud</div></div><input class="input" type="number" id="cfgPCub" min="0" step="1" /></div>
+              <div class="cfg-row"><div><strong>🎨 Pieza gráfica</strong><div class="cfg-desc">Puntos por solicitud</div></div><input class="input" type="number" id="cfgPPza" min="0" step="1" /></div>
+              <div class="cfg-row"><div><strong>🎥 Grabación de video</strong><div class="cfg-desc">Puntos por solicitud</div></div><input class="input" type="number" id="cfgPVid" min="0" step="1" /></div>
+              <div class="cfg-row"><div><strong>Umbral carga media</strong><div class="cfg-desc">Puntos/semana</div></div><input class="input" type="number" id="cfgUMed" min="0" /></div>
+              <div class="cfg-row"><div><strong>Umbral carga alta</strong><div class="cfg-desc">Puntos/semana</div></div><input class="input" type="number" id="cfgUAlta" min="0" /></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <button class="btn primary" id="cfgSave">Guardar configuración</button>
+          <button class="btn" id="cfgReset">Restablecer</button>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:14px">La configuración se guarda en este navegador. Para publicar valores por defecto, edítalos en <code>assets/config.js</code>.</p>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ===================== DRAWER (detalle de solicitud) ===================== -->
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div>
+      <h3 id="drTitle">Solicitud</h3>
+      <div id="drChips" style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+    <button class="close" id="drClose">×</button>
+  </div>
+  <div class="drawer-body" id="drBody"></div>
+  <div class="drawer-actions">
+    <div class="f-label" style="margin-bottom:8px">Cambiar estado de ejecución</div>
+    <div class="status-picker" id="drStatusPicker"></div>
+    <a class="btn" id="drCalLink" target="_blank" rel="noopener" style="width:100%;justify-content:center">🔗 Abrir en Google Calendar</a>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="assets/config.js"></script>
+<script src="assets/demo-data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
