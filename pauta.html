@@ -274,7 +274,7 @@ footer{color:var(--tenue);font-size:12px;margin-top:34px}
 
     <!-- SOLICITUDES -->
     <section id="v-solicitudes" class="oculto">
-      <div class="seccion-tit"><h2 style="font-size:26px">Todas las solicitudes</h2><button class="btn sec sm" id="btnCsv">Descargar CSV</button></div>
+      <div class="seccion-tit"><h2 style="font-size:26px">Todas las solicitudes</h2><div style="display:flex;gap:8px"><button class="btn sm oculto" id="btnLote">Marcar las filtradas como enviadas</button><button class="btn sec sm" id="btnCsv">Descargar CSV</button></div></div>
       <div class="barra">
         <input type="search" id="fTexto" placeholder="Buscar radicado, actividad, solicitante o lugar">
         <select id="fDep"><option value="">Todas las dependencias</option></select>
@@ -282,7 +282,7 @@ footer{color:var(--tenue);font-size:12px;margin-top:34px}
         <select id="fServ"><option value="">Todos los servicios</option></select>
         <select id="fEst"><option value="">Todos los estados</option></select>
         <select id="fResp"><option value="">Todo el equipo</option><option value="-">Sin delegar</option></select>
-        <select id="fOrig"><option value="">Todos los orígenes</option><option value="Formulario">Formulario</option><option value="Directa">Directa</option></select>
+        <select id="fOrig"><option value="">Todos los orígenes</option><option value="Formulario">Formulario</option><option value="Directa">Directa</option><option value="Migrada">Migrada del calendario</option></select>
       </div>
       <div class="tabla"><table class="datos">
         <thead><tr><th>Radicado</th><th>Recibida</th><th>Programa</th><th>Servicio y actividad</th><th>Fecha</th><th>Estado</th><th>Responsable</th><th>Entrega</th><th>Prensa Central</th></tr></thead>
@@ -376,6 +376,7 @@ function situacion(s) {
     return tarde ? { tipo: 'aviso', txt: 'Enviada tarde' } : { tipo: 'bien', txt: 'A tiempo' };
   }
   const d = s.limite ? difDias(s.limite, hoy()) : null;
+  if (s.origen.startsWith('Migrada') && d !== null && d < 0) return { tipo: 'aviso', txt: 'Migrada: confirmar envío', migrada: true };
   if (d !== null && d < 0) return { tipo: 'critico', txt: 'Retrasada ' + (-d) + (d === -1 ? ' día' : ' días'), retrasada: true };
   if (d === 0) return { tipo: 'aviso', txt: 'Vence hoy', pronto: true };
   if (d === 1) return { tipo: 'aviso', txt: 'Vence mañana', pronto: true };
@@ -448,6 +449,7 @@ function pintarPauta() {
   const activas = S.sols.filter(s => s.estado !== 'Cancelada');
   const porAsignar = activas.filter(s => s.estado === 'Por asignar');
   const retrasadas = activas.filter(s => (situacion(s) || {}).retrasada);
+  const migradas = activas.filter(s => (situacion(s) || {}).migrada);
   const pronto = activas.filter(s => (situacion(s) || {}).pronto);
   const mias = activas.filter(s => s.responsable === S.usuario && s.estado !== 'Enviada a Prensa Central');
 
@@ -457,10 +459,12 @@ function pintarPauta() {
   if (porAsignar.length) partes.push(plural(porAsignar.length, 'solicitud por delegar', 'solicitudes por delegar'));
   if (retrasadas.length) partes.push(plural(retrasadas.length, 'retrasada', 'retrasadas'));
   if (pronto.length) partes.push(plural(pronto.length, 'vence pronto', 'vencen pronto'));
+  if (migradas.length) partes.push(plural(migradas.length, 'migrada por confirmar', 'migradas por confirmar'));
   $('resumen').textContent = partes.length ? 'Hay ' + partes.join(', ').replace(/, ([^,]*)$/, ' y $1') + '.' : 'Todo está al día. No hay pendientes urgentes.';
 
   const rap = [['', 'Todo', activas.length], ['retrasadas', 'Retrasadas', retrasadas.length], ['pronto', 'Vencen pronto', pronto.length],
                ['delegar', 'Por delegar', porAsignar.length]];
+  if (migradas.length) rap.push(['migradas', 'Migradas por confirmar', migradas.length]);
   if (CFG.equipo.includes(S.usuario)) rap.push(['mias', 'Mis pendientes', mias.length]);
   $('rapidos').innerHTML = rap.map(([k, t, n]) => `<button class="chip" aria-pressed="${S.rapido === k}" data-rap="${k}">${t} <b>${n}</b></button>`).join('');
   $('rapidos').querySelectorAll('[data-rap]').forEach(b => b.onclick = () => { S.rapido = b.dataset.rap; pintarPauta(); });
@@ -493,6 +497,7 @@ function pasaFiltroRapido(s) {
     case 'pronto': return sit.pronto;
     case 'delegar': return s.estado === 'Por asignar';
     case 'mias': return s.responsable === S.usuario;
+    case 'migradas': return sit.migrada;
     default: return true;
   }
 }
@@ -728,6 +733,9 @@ function filtradas() {
 }
 function pintarTabla() {
   const l = filtradas();
+  const pendientesLote = l.filter(s => s.estado !== 'Enviada a Prensa Central' && s.estado !== 'Cancelada');
+  $('btnLote').classList.toggle('oculto', $('fOrig').value !== 'Migrada' || !pendientesLote.length);
+  $('btnLote').textContent = 'Marcar ' + pendientesLote.length + ' como enviadas a Prensa Central';
   $('tbody').innerHTML = l.length ? l.map(s => {
     const sit = situacion(s);
     return `<tr data-abrir="${s.id}"><td><b>${s.id}</b><br><span class="sub">${s.origen.startsWith('Directa') ? 'Directa' : 'Formulario'}</span></td>
@@ -739,6 +747,15 @@ function pintarTabla() {
       <td>${s.enviadaPC ? '✓ ' + fFH(s.fechaPC) : '<span class="sub">Pendiente</span>'}</td></tr>`;
   }).join('') : '<tr><td colspan="9" class="vacio">No hay solicitudes con estos filtros. Pruebe quitando alguno.</td></tr>';
 }
+$('btnLote').onclick = async () => {
+  const ids = filtradas().filter(s => s.estado !== 'Enviada a Prensa Central' && s.estado !== 'Cancelada').map(s => s.id);
+  if (!ids.length) return;
+  if (!confirm('¿Confirmar que estas ' + ids.length + ' solicitudes ya se enviaron a Prensa Central? Puede afinar la lista con los filtros antes de confirmar.')) return;
+  $('btnLote').disabled = true;
+  try { const r = await api('marcarEnviadasLote', S.token, ids); toast(r.actualizadas + ' solicitudes marcadas como enviadas'); await cargar(); }
+  catch (e) { toast(e.message, true); }
+  $('btnLote').disabled = false;
+};
 $('btnCsv').onclick = () => {
   const cols = ['id', 'recibida', 'origen', 'solicitante', 'dependencia', 'programa', 'servicio', 'actividad', 'objetivo', 'fecha', 'horaIni', 'horaFin', 'lugar', 'transporte', 'estado', 'responsable', 'limite', 'enviadaPC', 'fechaPC', 'publicacion'];
   const csv = [cols.join(';')].concat(filtradas().map(s => cols.map(c => '"' + String(s[c] ?? '').replace(/"/g, '""') + '"').join(';'))).join('\n');
