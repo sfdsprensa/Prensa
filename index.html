@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solicitud a Prensa · Secretaría de Familia y Desarrollo Social</title>
+<meta name="description" content="Formulario para solicitar cubrimientos, piezas gráficas y videos al equipo de prensa de la Secretaría de Familia y Desarrollo Social de Zipaquirá.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --tinta:#14324a; --tinta-2:#1e4562; --fondo:#eef2f5; --sup:#ffffff; --linea:#d5dde5; --texto:#1b2333; --suave:#5b6577;
+  --marca:#0e7c66; --marca-claro:#e3f2ee; --error:#b42318; --aviso:#8a4b00; --aviso-fondo:#fff4e0;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Instrument Sans",system-ui,sans-serif;background:var(--fondo);color:var(--texto);font-size:15px;line-height:1.5}
+.layout{display:grid;grid-template-columns:minmax(280px,380px) 1fr;min-height:100vh}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* Columna de contexto */
+aside{background:var(--tinta);color:#e7eef4;padding:44px 36px;position:sticky;top:0;height:100vh;overflow:auto}
+@media(max-width:900px){aside{position:static;height:auto;padding:32px 22px}}
+aside .org{font-size:13px;color:#a9bccb;margin:0 0 28px}
+aside h1{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(34px,4vw,46px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px;color:#fff}
+aside p{margin:0 0 14px;color:#c9d6e0;max-width:34ch}
+.regla{margin-top:30px;border-top:1px solid #2e5675;padding-top:22px}
+.regla .n{font-family:"Bricolage Grotesque",sans-serif;font-size:64px;font-weight:800;line-height:.9;color:#fff}
+.regla .n small{font-size:20px;font-weight:700;margin-left:6px}
+.regla p{margin-top:8px}
+.pasos{margin:28px 0 0;padding:0;list-style:none;counter-reset:p}
+.pasos li{counter-increment:p;display:grid;grid-template-columns:28px 1fr;gap:10px;margin-bottom:12px;color:#c9d6e0;font-size:14px}
+.pasos li::before{content:counter(p);width:24px;height:24px;border-radius:50%;border:1.5px solid #6f93ad;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:600}
+
+/* Formulario */
+main{padding:44px clamp(18px,5vw,64px) 60px;max-width:860px}
+@media(max-width:900px){main{padding:26px 16px 50px}}
+.sello{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:13.5px;color:var(--suave);margin-bottom:22px}
+.sello b{color:var(--texto)}
+fieldset{border:0;margin:0 0 34px;padding:0}
+legend{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:22px;letter-spacing:-.01em;margin-bottom:4px;padding:0}
+.ayuda-legend{color:var(--suave);font-size:14px;margin:0 0 16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:16px}
+@media(max-width:620px){.g2,.g3{grid-template-columns:1fr}}
+.campo{margin-bottom:16px}
+label.et{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+label.et .req{color:var(--error);margin-left:2px}
+.nota{font-size:13px;color:var(--suave);margin-top:5px}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=time],input[type=url],select,textarea{
+  width:100%;font:inherit;font-size:15px;color:var(--texto);background:var(--sup);border:1.5px solid var(--linea);border-radius:8px;padding:11px 12px}
+textarea{min-height:104px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.opcion:focus-within{outline:3px solid #8cc9bb;outline-offset:1px;border-color:var(--marca)}
+.invalido{border-color:var(--error)!important}
+
+/* Servicios */
+.servicios{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:620px){.servicios{grid-template-columns:1fr}}
+.servicio{position:relative;border:1.5px solid var(--linea);background:var(--sup);border-radius:10px;padding:16px 16px 14px;cursor:pointer;display:block}
+.servicio input{position:absolute;opacity:0}
+.servicio .ic{display:block;width:34px;height:34px;margin-bottom:10px;color:var(--tinta)}
+.servicio b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:18px}
+.servicio span{font-size:13.5px;color:var(--suave)}
+.servicio:has(input:checked){border-color:var(--tinta);box-shadow:inset 0 0 0 1.5px var(--tinta);background:#f5f8fb}
+.servicio:has(input:focus-visible){outline:3px solid #8cc9bb}
+
+.opciones{display:flex;flex-direction:column;gap:8px}
+.opciones.fila{flex-direction:row;flex-wrap:wrap}
+.opcion{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--linea);background:var(--sup);border-radius:8px;padding:10px 12px;cursor:pointer;font-size:14.5px}
+.opcion input{margin-top:3px;accent-color:var(--tinta)}
+.opcion:has(input:checked){border-color:var(--tinta);background:#f5f8fb}
+
+.bloque{border-left:3px solid var(--tinta);padding:4px 0 2px 18px;margin-top:6px}
+.oculto{display:none!important}
+.dispo{font-size:14px;padding:10px 12px;border-radius:8px;margin-top:4px}
+.dispo.ok{background:var(--marca-claro);color:#0b5a4a}
+.dispo.no{background:var(--aviso-fondo);color:var(--aviso)}
+.error-box{background:#fdecea;color:var(--error);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:14.5px}
+
+.enviar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--linea);padding-top:24px}
+button.primario{background:var(--tinta);color:#fff;border:0;border-radius:8px;padding:14px 26px;font:600 16px "Instrument Sans",sans-serif;cursor:pointer}
+button.primario:hover{background:var(--tinta-2)}
+button.primario:disabled{opacity:.6;cursor:progress}
+.enviar small{color:var(--suave)}
+
+.listo{max-width:520px;padding-top:30px}
+.listo h2{font-family:"Bricolage Grotesque",sans-serif;font-size:40px;line-height:1.05;margin:0 0 14px;letter-spacing:-.02em}
+.radicado{font-family:"Bricolage Grotesque",sans-serif;font-size:56px;font-weight:800;color:var(--tinta);margin:6px 0 18px;letter-spacing:.01em}
+footer{font-size:12.5px;color:var(--suave);margin-top:40px}
+@media (prefers-reduced-motion:no-preference){.listo{animation:entra .35s ease-out}@keyframes entra{from{opacity:0;transform:translateY(8px)}}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside>
+  <p class="org">Alcaldía de Zipaquirá<br>Secretaría de Familia y Desarrollo Social</p>
+  <h1>Solicitud al equipo de prensa</h1>
+  <p>Pida aquí cubrimientos, piezas gráficas y videos para su programa. Darwin y Camila reciben la solicitud, la agendan y envían el contenido a Prensa Central para que se publique en Facebook e Instagram de la Alcaldía.</p>
+  <div class="regla">
+    <div class="n">5<small>días</small></div>
+    <p>de anticipación como mínimo. Lo que sea para antes, coordínelo directamente con el equipo de prensa.</p>
+  </div>
+  <ol class="pasos">
+    <li>Usted diligencia la solicitud y recibe un número de radicado en su correo.</li>
+    <li>El equipo de prensa la delega a Darwin o a Camila y le avisa quién la atiende.</li>
+    <li>El contenido se produce y se envía a Prensa Central para su publicación.</li>
+  </ol>
+</aside>
+
+<main>
+<form id="form" novalidate>
+  <div class="sello"><span>Fecha de la solicitud: <b id="hoy"></b></span><span>Los campos con <span style="color:var(--error)">*</span> son obligatorios</span></div>
+
+  <fieldset>
+    <legend>Quién solicita</legend>
+    <p class="ayuda-legend">Usaremos estos datos para confirmarle la solicitud y contactarle.</p>
+    <div class="g2">
+      <div class="campo"><label class="et" for="solicitante">Nombre completo<span class="req">*</span></label><input type="text" id="solicitante" name="solicitante" autocomplete="name" required></div>
+      <div class="campo"><label class="et" for="cargo">Cargo</label><input type="text" id="cargo" name="cargo" placeholder="Ej: Coordinadora del programa"></div>
+      <div class="campo"><label class="et" for="correo">Correo electrónico<span class="req">*</span></label><input type="email" id="correo" name="correo" autocomplete="email" required></div>
+      <div class="campo"><label class="et" for="celular">Celular / WhatsApp<span class="req">*</span></label><input type="tel" id="celular" name="celular" inputmode="tel" autocomplete="tel" required></div>
+      <div class="campo"><label class="et" for="dependencia">Dependencia<span class="req">*</span></label><select id="dependencia" name="dependencia" required><option value="">Seleccione…</option></select></div>
+      <div class="campo" id="w-programa"><label class="et" for="programa" id="l-programa">Programa<span class="req">*</span></label><select id="programa" name="programa"></select></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Qué servicio necesita<span class="req" style="color:var(--error)">*</span></legend>
+    <p class="ayuda-legend">Según el servicio le pediremos la información que el equipo necesita para hacerlo.</p>
+    <div class="servicios" role="radiogroup">
+      <label class="servicio"><input type="radio" name="servicio" value="Cubrimiento">
+        <svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="9" width="26" height="18" rx="3"/><path d="M11 9l2-4h6l2 4"/><circle cx="16" cy="18" r="5"/></svg>
+        <b>Cubrimiento</b><span>Fotos y registro de una actividad o evento en campo.</span></label>
+      <label class="servicio"><input type="radio" name="servicio" value="Pieza gráfica">
+        <svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="22" height="24" rx="2"/><path d="M9 21l5-6 4 4 3-3 3 5"/><circle cx="12" cy="10" r="2"/></svg>
+        <b>Pieza gráfica</b><span>Post, historia, afiche o banner para redes o impresión.</span></label>
+      <label class="servicio"><input type="radio" name="servicio" value="Video">
+        <svg class="ic" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="19" height="16" rx="3"/><path d="M22 14l7-4v12l-7-4z"/></svg>
+        <b>Video</b><span>Grabación, edición y envío a Prensa Central.</span></label>
+    </div>
+  </fieldset>
+
+  <fieldset id="f-detalle" class="oculto">
+    <legend id="t-detalle">Detalles</legend>
+    <p class="ayuda-legend" id="a-detalle"></p>
+
+    <div class="campo"><label class="et" for="actividad" id="l-actividad">Actividad o tema<span class="req">*</span></label>
+      <input type="text" id="actividad" name="actividad" placeholder="Ej: Jornada de vacunación en el barrio San Carlos"></div>
+    <div class="campo"><label class="et" for="objetivo">¿Para qué es el servicio?<span class="req">*</span></label>
+      <textarea id="objetivo" name="objetivo" placeholder="Qué se quiere lograr y a quién va dirigido. Ej: invitar a las familias del sector a la jornada."></textarea></div>
+
+    <!-- Cubrimiento y video -->
+    <div id="b-campo" class="bloque oculto">
+      <div class="g3">
+        <div class="campo"><label class="et" for="fecha" id="l-fecha">Fecha<span class="req">*</span></label><input type="date" id="fecha" name="fecha"></div>
+        <div class="campo"><label class="et" for="horaIni">Hora de inicio<span class="req">*</span></label><input type="time" id="horaIni" name="horaIni" step="900"></div>
+        <div class="campo"><label class="et" for="horaFin">Hora de finalización<span class="req">*</span></label><input type="time" id="horaFin" name="horaFin" step="900"></div>
+      </div>
+      <div id="dispo" class="dispo oculto" role="status"></div>
+      <div class="campo" style="margin-top:14px"><label class="et" for="lugar" id="l-lugar">Lugar<span class="req">*</span></label>
+        <input type="text" id="lugar" name="lugar" placeholder="Dirección, barrio o vereda, y nombre del sitio"></div>
+      <div class="campo"><span class="et" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px">¿Ya solicitó transporte para el equipo de prensa?<span class="req" style="color:var(--error)">*</span></span>
+        <div class="opciones" id="op-transporte"></div></div>
+      <div class="campo"><label class="et" for="copy" id="l-copy">Copy o mensaje aproximado<span class="req">*</span></label>
+        <textarea id="copy" name="copy"></textarea><div class="nota" id="n-copy"></div></div>
+      <div class="campo" id="w-grabar"><label class="et" for="contenidoVideo">¿Qué se debe grabar?</label>
+        <textarea id="contenidoVideo" placeholder="Momentos clave, personas a entrevistar, tomas que no pueden faltar."></textarea></div>
+    </div>
+
+    <!-- Pieza gráfica -->
+    <div id="b-pieza" class="bloque oculto">
+      <div class="campo"><label class="et" for="fechaPieza">¿Para cuándo la necesita?<span class="req">*</span></label><input type="date" id="fechaPieza" style="max-width:240px">
+        <div class="nota">Fecha en la que debe estar publicada o lista.</div></div>
+      <div class="campo"><label class="et" for="contenido">¿Qué debe decir la pieza?<span class="req">*</span></label>
+        <textarea id="contenido" placeholder="Título, fecha, hora, lugar, requisitos, contacto… escriba el texto tal como debe salir."></textarea></div>
+      <div class="campo"><span class="et" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px">Formato</span>
+        <div class="opciones fila" id="op-formatos"></div></div>
+      <div class="campo"><label class="et" for="copyPieza">Copy para la publicación</label>
+        <textarea id="copyPieza" placeholder="El texto que acompaña la pieza en Facebook e Instagram (opcional)."></textarea></div>
+    </div>
+
+    <div class="campo"><label class="et" for="insumos">Link de insumos</label>
+      <input type="url" id="insumos" name="insumos" placeholder="Carpeta de Drive con fotos, logos o documentos de referencia (opcional)"></div>
+  </fieldset>
+
+  <fieldset id="f-cierre" class="oculto">
+    <legend>Inscripciones y observaciones</legend>
+    <div class="campo"><span class="et" style="display:block;font-weight:600;font-size:14px;margin-bottom:6px">¿Este contenido va a tener un link de inscripción?<span class="req" style="color:var(--error)">*</span></span>
+      <div class="opciones fila">
+        <label class="opcion"><input type="radio" name="inscripcion" value="Sí"> Sí</label>
+        <label class="opcion"><input type="radio" name="inscripcion" value="No"> No</label>
+      </div></div>
+    <div class="campo oculto" id="w-link"><label class="et" for="linkInscripcion">Link de inscripción</label>
+      <input type="url" id="linkInscripcion" name="linkInscripcion" placeholder="https://forms.gle/…">
+      <div class="nota">Si aún no lo tiene, déjelo en blanco y envíelo al equipo antes de la publicación.</div></div>
+    <div class="campo"><label class="et" for="observaciones">Observaciones</label>
+      <textarea id="observaciones" name="observaciones" placeholder="Cualquier otro dato que el equipo deba saber."></textarea></div>
+  </fieldset>
+
+  <div id="errores"></div>
+  <div class="enviar">
+    <button class="primario" id="btn" type="submit">Enviar solicitud</button>
+    <small>Recibirá el número de radicado en su correo.</small>
+  </div>
+  <footer>Equipo de Prensa · Secretaría de Familia y Desarrollo Social · Desarrollado por Hope - Julieth Rivera</footer>
+</form>
+
+<section class="listo oculto" id="listo" aria-live="polite">
+  <h2>Su solicitud quedó radicada</h2>
+  <div class="radicado" id="radicado"></div>
+  <p>Le enviamos la confirmación a <b id="correo-ok"></b>. Cuando Darwin o Camila la tomen, le llegará un correo con el nombre de quien la atiende.</p>
+  <button class="primario" onclick="location.reload()">Hacer otra solicitud</button>
+</section>
+</main>
+</div>
+
+<script src="assets/config.js"></script>
+<script src="assets/api.js"></script>
+<script type="module">
+const CFG = await cargarConfig();
+const $ = id => document.getElementById(id);
+const form = $('form');
+let servicio = '';
+
+$('hoy').textContent = new Intl.DateTimeFormat('es-CO', { timeZone: 'America/Bogota', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+$('dependencia').innerHTML += Object.keys(CFG.dependencias).map(d => `<option>${d}</option>`).join('');
+$('op-transporte').innerHTML = CFG.transporte.map(t => `<label class="opcion"><input type="radio" name="transporte" value="${t}"> ${t}</label>`).join('');
+$('op-formatos').innerHTML = CFG.formatos.map(t => `<label class="opcion"><input type="checkbox" name="formatos" value="${t}"> ${t}</label>`).join('');
+$('fecha').min = $('fechaPieza').min = CFG.minFecha;
+
+$('dependencia').onchange = () => {
+  const progs = CFG.dependencias[$('dependencia').value] || [];
+  const w = $('w-programa');
+  if (progs.length) {
+    w.innerHTML = '<label class="et" for="programa">Programa<span class="req">*</span></label><select id="programa" name="programa"><option value="">Seleccione…</option>' +
+      progs.map(p => `<option>${p}</option>`).join('') + '</select>';
+  } else {
+    w.innerHTML = '<label class="et" for="programa">Área o equipo</label><input type="text" id="programa" name="programa" placeholder="Opcional">';
+  }
+};
+$('dependencia').onchange();
+
+document.querySelectorAll('input[name=servicio]').forEach(r => r.onchange = () => {
+  servicio = r.value;
+  const pieza = servicio === 'Pieza gráfica', video = servicio === 'Video';
+  $('f-detalle').classList.remove('oculto'); $('f-cierre').classList.remove('oculto');
+  $('b-campo').classList.toggle('oculto', pieza); $('b-pieza').classList.toggle('oculto', !pieza);
+  $('w-grabar').classList.toggle('oculto', !video);
+  $('t-detalle').textContent = pieza ? 'Detalles de la pieza gráfica' : video ? 'Detalles del video' : 'Detalles del cubrimiento';
+  $('a-detalle').textContent = pieza ? 'Cuéntenos qué debe decir la pieza y para cuándo la necesita.'
+    : video ? 'El video se graba, se edita y se envía a Prensa Central para su publicación.'
+    : 'Si es un trabajo en campo, indique bien el lugar y si ya hay transporte para prensa.';
+  $('l-actividad').innerHTML = (video ? 'Actividad o tema del video' : pieza ? 'Tema de la pieza' : 'Actividad o tema') + '<span class="req">*</span>';
+  $('l-lugar').innerHTML = (video ? '¿Dónde se va a grabar?' : 'Lugar del cubrimiento') + '<span class="req">*</span>';
+  $('l-copy').innerHTML = (video ? 'Copy o mensaje del video' : 'Copy o mensaje aproximado') + '<span class="req">*</span>';
+  $('n-copy').textContent = video ? 'Qué debe transmitir el video y el texto que lo acompañará en redes.' : 'Lo que debe decir la publicación del cubrimiento, más o menos.';
+  revisarDispo();
+});
+
+document.querySelectorAll('input[name=inscripcion]').forEach(r => r.onchange = () => $('w-link').classList.toggle('oculto', r.value !== 'Sí' || !r.checked));
+
+let seq = 0;
+['fecha', 'horaIni', 'horaFin'].forEach(id => $(id).addEventListener('change', revisarDispo));
+function revisarDispo() {
+  const box = $('dispo'), f = $('fecha').value, a = $('horaIni').value, b = $('horaFin').value;
+  if (servicio === 'Pieza gráfica' || !f || !a || !b || b <= a || f < CFG.minFecha) { box.classList.add('oculto'); return; }
+  const n = ++seq;
+  box.className = 'dispo'; box.textContent = 'Revisando la agenda del equipo…';
+  google.script.run.withSuccessHandler(r => {
+    if (n !== seq) return;
+    box.className = 'dispo ' + (r.ok ? 'ok' : 'no');
+    box.textContent = r.ok ? 'El equipo de prensa tiene disponibilidad en ese horario.'
+      : 'Darwin y Camila ya tienen compromisos en ese horario. Elija otra hora o comuníquese con el equipo de prensa.';
+  }).withFailureHandler(() => { if (n === seq) box.classList.add('oculto'); }).consultarDisponibilidad(f, a, b);
+}
+
+form.onsubmit = e => {
+  e.preventDefault();
+  document.querySelectorAll('.invalido').forEach(x => x.classList.remove('invalido'));
+  const v = n => (form.elements[n] && form.elements[n].value || '').trim();
+  const radio = n => (form.querySelector(`input[name="${n}"]:checked`) || {}).value || '';
+  const pieza = servicio === 'Pieza gráfica';
+  const d = {
+    solicitante: v('solicitante'), cargo: v('cargo'), correo: v('correo'), celular: v('celular'),
+    dependencia: v('dependencia'), programa: v('programa'), servicio,
+    actividad: v('actividad'), objetivo: v('objetivo'),
+    fecha: pieza ? $('fechaPieza').value : $('fecha').value, horaIni: $('horaIni').value, horaFin: $('horaFin').value,
+    lugar: v('lugar'), transporte: radio('transporte'),
+    copy: pieza ? $('copyPieza').value.trim() : v('copy'),
+    contenido: pieza ? $('contenido').value.trim() : $('contenidoVideo').value.trim(),
+    formatos: [...form.querySelectorAll('input[name=formatos]:checked')].map(x => x.value),
+    insumos: v('insumos'), inscripcion: radio('inscripcion'), linkInscripcion: v('linkInscripcion'), observaciones: v('observaciones')
+  };
+  const errores = validar(d);
+  if (errores.length) {
+    $('errores').innerHTML = '<div class="error-box"><b>Revise estos datos:</b><br>' + errores.map(x => '· ' + esc(x[1])).join('<br>') + '</div>';
+    errores.forEach(x => x[0] && $(x[0]) && $(x[0]).classList.add('invalido'));
+    const primero = errores[0][0] && $(errores[0][0]);
+    (primero || $('errores')).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (primero && primero.focus) primero.focus({ preventScroll: true });
+    return;
+  }
+  $('errores').innerHTML = '';
+  $('btn').disabled = true; $('btn').textContent = 'Enviando…';
+  google.script.run.withSuccessHandler(r => {
+    if (!r.ok) { $('errores').innerHTML = `<div class="error-box">${esc(r.mensaje)}</div>`; listo(); revisarDispo(); return; }
+    form.classList.add('oculto'); $('listo').classList.remove('oculto');
+    $('radicado').textContent = r.id; $('correo-ok').textContent = d.correo; window.scrollTo(0, 0);
+  }).withFailureHandler(err => { $('errores').innerHTML = `<div class="error-box">${esc(err.message)}</div>`; listo(); })
+    .enviarSolicitud(d);
+};
+function listo() { $('btn').disabled = false; $('btn').textContent = 'Enviar solicitud'; }
+
+function validar(d) {
+  const e = [], pieza = d.servicio === 'Pieza gráfica';
+  if (!d.solicitante) e.push(['solicitante', 'Escriba su nombre completo.']);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.correo)) e.push(['correo', 'Escriba un correo electrónico válido.']);
+  if (d.celular.replace(/\D/g, '').length < 7) e.push(['celular', 'Escriba un número de celular válido.']);
+  if (!d.dependencia) e.push(['dependencia', 'Seleccione la dependencia.']);
+  if ((CFG.dependencias[d.dependencia] || []).length && !d.programa) e.push(['programa', 'Seleccione el programa.']);
+  if (!d.servicio) { e.push(['', 'Seleccione el servicio que necesita.']); return e; }
+  if (!d.actividad) e.push(['actividad', 'Escriba la actividad o el tema.']);
+  if (!d.objetivo) e.push(['objetivo', 'Cuéntenos para qué es el servicio.']);
+  const idF = pieza ? 'fechaPieza' : 'fecha';
+  if (!d.fecha) e.push([idF, 'Seleccione la fecha.']);
+  else if (d.fecha < CFG.minFecha) e.push([idF, `La fecha debe ser con mínimo ${CFG.anticipacion} días de anticipación. Para algo antes, comuníquese directamente con el equipo de prensa.`]);
+  if (pieza) {
+    if (!d.contenido) e.push(['contenido', 'Escriba qué debe decir la pieza.']);
+  } else {
+    if (!d.horaIni) e.push(['horaIni', 'Indique la hora de inicio.']);
+    if (!d.horaFin || d.horaFin <= d.horaIni) e.push(['horaFin', 'La hora de finalización debe ser posterior a la de inicio.']);
+    if (!d.lugar) e.push(['lugar', d.servicio === 'Video' ? 'Indique dónde se va a grabar.' : 'Indique el lugar del cubrimiento.']);
+    if (!d.transporte) e.push(['op-transporte', 'Indique si ya solicitó transporte para prensa.']);
+    if (!d.copy) e.push(['copy', 'Escriba el copy o mensaje.']);
+  }
+  if (!d.inscripcion) e.push(['', 'Indique si el contenido tendrá link de inscripción.']);
+  return e;
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+</script>
+</body>
+</html>
